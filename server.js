@@ -3,25 +3,28 @@ const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt-nodejs');
 const cors = require('cors');
 const knex = require('knex');
+const morgan = require('morgan');
+const dotenv = require('dotenv');
 
 const register = require('./controllers/register');
 const signin = require('./controllers/signin');
 const profile = require('./controllers/profile');
 const image = require('./controllers/image');
 
+const envData = dotenv.config();
+if (envData.error) {
+    throw envData.error
+}
+console.log(envData.parsed)
 const db = knex({
   client: 'pg',
-  connection: {
-    host : '127.0.0.1',
-    user : 'aneagoie',
-    password : '',
-    database : 'smart-brain'
-  }
+  connection: process.env.POSTGRES_URI,
 });
 
 const app = express();
 
-app.use(cors())
+app.use(morgan('combined'));
+app.use(cors());
 app.use(bodyParser.json());
 
 app.get('/', (req, res)=> { res.send(database.users) })
